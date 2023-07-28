@@ -11,7 +11,7 @@ if(process.env.REACT_APP_ENV === Environment.DEVELOPMENT){
 }
 
 if(process.env.REACT_APP_ENV === Environment.PRODUCTION){
-    env.API_URL            = 'https://myutopiah.com/api'
+    env.API_URL            = 'http://3.71.83.123/api'
 }
 
 
