@@ -199,11 +199,6 @@ export default function WainoExplorer() {
 
 const ListingComponent = ({state , setState}) => {
 
-  const defaultProps = {
-    options: state.fetchedData,
-    getOptionLabel: (option) => option.winery_name,
-  };
-
   const getUniqueWineryNames = (data) => {
     const uniqueNames = [];
     data.forEach((wine) => {
@@ -217,11 +212,43 @@ const ListingComponent = ({state , setState}) => {
   // Get unique winery names
   const uniqueWineryNames = getUniqueWineryNames(state.fetchedData);
 
+  const getUniqueCountryNames = (data) => {
+    const uniqueNames = [];
+    data.forEach((wine) => {
+      if (!uniqueNames.includes(wine.country)) {
+        uniqueNames.push(wine.country);
+      }
+    });
+    return uniqueNames;
+  };
+
+  // Get unique winery names
+  const uniqueCountryNames = getUniqueCountryNames(state.fetchedData);
+
+  const getUniqueGrapeNames = (data) => {
+    const uniqueNames = [];
+    data.forEach((wine) => {
+      if (!uniqueNames.includes(wine.grape)) {
+        uniqueNames.push(wine.grape);
+      }
+    });
+    return uniqueNames;
+  };
+
+  // Get unique winery names
+  const uniqueGrapeNames = getUniqueGrapeNames(state.fetchedData);
+
 
   const [value, setValue] = React.useState([0, 100]);
+  const [ratings, setRatings] = React.useState([0, 5]);
+
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
+  };
+
+  const handleChangeRatings = (event, newValue) => {
+    setRatings(newValue);
   };
 
   function valuetext(value) {
@@ -264,6 +291,58 @@ const ListingComponent = ({state , setState}) => {
                   max               = {500}
                 />
               </div>
+              
+              <h2 className='Heading22B mt_60 d-flex space-between align-items-center'>
+                Ratings
+              <div className='Heading16M'>/5</div>
+            </h2>
+            <div className='mt_16'>
+                <div className='d-flex space-between mb_8'>
+                  <p className='Caption12M'>{ratings[0]}</p>
+                  <p className='Caption12M'>{ratings[1]}</p>
+                </div>
+                <Slider
+                  value             = {ratings}
+                  onChange          = {handleChangeRatings}
+                  valueLabelDisplay = "auto"
+                  aria-labelledby   = "range-slider"
+                  max               = {5}
+                />
+              </div>
+
+              <h2 className='Heading22B mt_60'>
+                Country
+              </h2>
+              <Autocomplete
+                  multiple
+                  id             = "tags-standard"
+                  options        = {uniqueCountryNames}
+                  getOptionLabel={(option) => option}
+                  renderInput    = {(params) => (
+                    <TextField
+                      {...params}
+                      variant="standard"
+                      label="Select"
+                    />
+                  )}
+                />
+
+              <h2 className='Heading22B mt_60'>
+                Grape
+              </h2>
+              <Autocomplete
+                  multiple
+                  id             = "tags-standard"
+                  options        = {uniqueGrapeNames}
+                  getOptionLabel={(option) => option}
+                  renderInput    = {(params) => (
+                    <TextField
+                      {...params}
+                      variant="standard"
+                      label="Select"
+                    />
+                  )}
+                />
             </div>
             <div className='w-55'>
               {state.fetchedData.map((wine)=><div className="card mb-3 position-relative">
