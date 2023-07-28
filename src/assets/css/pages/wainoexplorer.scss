@@ -1,0 +1,72 @@
+#WainoExplorer {
+    position: relative; /* To allow absolute positioning within this container */
+    height: calc(100vh - 96px);
+    width: 100%;
+
+    .background-blur {
+        /* Apply the background image and blur */
+        background-image: url('https://images.unsplash.com/photo-1612279621492-4f2d14579d19?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: top 55% right 0;
+        height: 100%;
+        width: 100%;
+        filter: blur(2px); /* Apply the blur effect */
+        position: absolute; /* Position it absolutely within the container */
+        top: 0;
+        left: 0;
+        z-index: 0; /* Put it behind other content */
+      }
+      
+      .insideContent {
+        position: relative;  /* So it can be positioned within the container */
+        z-index : 1;         /* Put it on top of the blurred background */
+        height  : 100%;
+      }
+
+
+      .detailsSection{
+        box-shadow      : rgba(0, 0, 0, 0.1) 0px 4px 12px;
+        padding         : 30px 24px;
+        background-color: white;
+        border-radius   : 6px;
+        width: 28%;
+      }
+
+
+      .ellipses {
+        width: 100%;
+        display: block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      #ListingComponent{
+        padding: 0px 80px;
+
+        .card{
+          min-height: 190px;
+          max-height: 190px;
+          border: 0px;
+          overflow: hidden;
+          box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+        }
+
+        .priceSection{
+          background-color: #00845F;
+          padding         : 6px 24px;
+          color           : white;
+          position        : absolute;
+          top             : 0px;
+          right           : 0px;
+        }
+
+        .leftSection{
+          padding: 0px 32px 0px 0px;
+        }
+      }
+  }
+  
+  
+  
