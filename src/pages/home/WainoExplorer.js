@@ -105,8 +105,6 @@ export default function WainoExplorer() {
     return data.sort(compareRatings);
   }
 
-  console.log('state ', state.fetchedData)
-
   useEffect(()=>{
     onLoadFunc();
   },[])
@@ -197,7 +195,17 @@ export default function WainoExplorer() {
 }
 
 
-const ListingComponent = ({state , setState}) => {
+const ListingComponent = ({state}) => {
+
+  const [filters, setFilters] = useState({
+    sellerName : '',
+    priceRange : [0,500],
+    ratingRange: [0,5],
+    countries  : [],
+    grape      : [],
+  })
+
+  const [filteredWines, setFilteredWines] = useState(state.fetchedData)
 
   const getUniqueWineryNames = (data) => {
     const uniqueNames = [];
@@ -238,36 +246,70 @@ const ListingComponent = ({state , setState}) => {
   // Get unique winery names
   const uniqueGrapeNames = getUniqueGrapeNames(state.fetchedData);
 
-
-  const [value, setValue] = React.useState([0, 100]);
-  const [ratings, setRatings] = React.useState([0, 5]);
-
-
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
+  const handleChangePrice = (event, newValue) => {
+    setFilters({...filters , priceRange : newValue})
   };
 
   const handleChangeRatings = (event, newValue) => {
-    setRatings(newValue);
+    setFilters({...filters, ratingRange : newValue})
   };
 
   function valuetext(value) {
     return `${value} €`;
   }
 
+  useEffect(() => {
+    // Apply filters to the fetched data
+    const filteredData = state.fetchedData.filter((wine) => {
+      // Apply sellerName filter
+      if (filters.sellerName && wine.wine_seller !== filters.sellerName) {
+        return false;
+      }
+  
+      // Apply priceRange filter
+      const winePrice = parseFloat(wine.current_price);
+      if (filters.priceRange[0] > winePrice || winePrice > filters.priceRange[1]) {
+        return false;
+      }
+  
+      // Apply ratingRange filter
+      const wineRating = parseFloat(wine.Rating_Vivino);
+      if (filters.ratingRange[0] > wineRating || wineRating > filters.ratingRange[1]) {
+        return false;
+      }
+  
+      // Apply countries filter
+      if (filters.countries.length > 0 && !filters.countries.includes(wine.country)) {
+        return false;
+      }
+  
+      // Apply grape filter
+      if (filters.grape.length > 0 && !filters.grape.some(selectedGrape => selectedGrape === wine.grape)) {
+        return false;
+      }
+  
+      // All filters passed
+      return true;
+    });
+  
+    setFilteredWines(filteredData);
+
+  },[filters.countries, filters.sellerName, filters.grape, filters.priceRange[0], filters.priceRange[1], filters.sellerName, filters.ratingRange[0], filters.ratingRange[1]])
+
   return(
     <div id="ListingComponent">
-        <h2 className='Heading26M pt_40'>Showing Results for <span className='Heading28B'>{state.fetchedData.length}</span> wines</h2>
+        <h2 className='Heading26M pt_40'>Showing Results for <span className='Heading28B'>{filteredWines.length >0 ? filteredWines.length : state.fetchedData.length}</span> wines</h2>
         <div className='d-flex mt_40 space-between'>
             <div className='w-40 leftSection'>
             <h2 className='Heading22B'>
               Seller Name
             </h2>
             <Autocomplete
-            options={uniqueWineryNames}
-            getOptionLabel={(option) => option}
-            id="auto-complete"
+            options        = {uniqueWineryNames}
+            getOptionLabel = {(option) => option}
+            id             = "auto-complete"
             autoComplete
+            onChange={(e, value)=>setFilters({...filters, sellerName : value})}
             includeInputInList
             renderInput={(params) => (
               <TextField {...params} label="Select" variant="standard" />
@@ -279,12 +321,12 @@ const ListingComponent = ({state , setState}) => {
             </h2>
             <div className='mt_16'>
                 <div className='d-flex space-between mb_8'>
-                  <p className='Caption12M'>€{value[0]}</p>
-                  <p className='Caption12M'>{value[1] == 500 ? '€500 +' : value[1]}</p>
+                  <p className='Caption12M'>€{filters.priceRange[0]}</p>
+                  <p className='Caption12M'>{filters.priceRange[1] == 500 ? '€500 +' : filters.priceRange[1]}</p>
                 </div>
                 <Slider
-                  value             = {value}
-                  onChange          = {handleChange}
+                  value             = {filters.priceRange}
+                  onChange          = {handleChangePrice}
                   valueLabelDisplay = "auto"
                   aria-labelledby   = "range-slider"
                   getAriaValueText  = {valuetext}
@@ -294,15 +336,15 @@ const ListingComponent = ({state , setState}) => {
               
               <h2 className='Heading22B mt_60 d-flex space-between align-items-center'>
                 Ratings
-              <div className='Heading16M'>/5</div>
+              <div className='Heading16M'>Out of 5</div>
             </h2>
             <div className='mt_16'>
                 <div className='d-flex space-between mb_8'>
-                  <p className='Caption12M'>{ratings[0]}</p>
-                  <p className='Caption12M'>{ratings[1]}</p>
+                  <p className='Caption12M'>{filters.ratingRange[0]}</p>
+                  <p className='Caption12M'>{filters.ratingRange[1]}</p>
                 </div>
                 <Slider
-                  value             = {ratings}
+                  value             = {filters.ratingRange}
                   onChange          = {handleChangeRatings}
                   valueLabelDisplay = "auto"
                   aria-labelledby   = "range-slider"
@@ -318,6 +360,7 @@ const ListingComponent = ({state , setState}) => {
                   id             = "tags-standard"
                   options        = {uniqueCountryNames}
                   getOptionLabel={(option) => option}
+                  onChange={(e, value)=>setFilters({...filters, countries : value})}
                   renderInput    = {(params) => (
                     <TextField
                       {...params}
@@ -335,6 +378,7 @@ const ListingComponent = ({state , setState}) => {
                   id             = "tags-standard"
                   options        = {uniqueGrapeNames}
                   getOptionLabel={(option) => option}
+                  onChange={(e, value)=>setFilters({...filters, grape : value})}
                   renderInput    = {(params) => (
                     <TextField
                       {...params}
@@ -345,7 +389,7 @@ const ListingComponent = ({state , setState}) => {
                 />
             </div>
             <div className='w-55'>
-              {state.fetchedData.map((wine)=><div className="card mb-3 position-relative">
+              {(filteredWines.length > 0 ? filteredWines : state.fetchedData).map((wine)=><div className="card mb-3 position-relative">
                 <div className="row no-gutters">
                   <div className="col-md-3">
                     <img src={wine.image_url} style={{objectFit : 'contain'}} width={'100%'} height={190} className="card-img" alt="..." />
