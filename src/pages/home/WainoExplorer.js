@@ -299,6 +299,19 @@ const ListingComponent = ({state}) => {
   return(
     <div id="ListingComponent">
         <h2 className='Heading26M pt_40'>Showing Results for <span className='Heading28B'>{filteredWines.length >0 ? filteredWines.length : state.fetchedData.length}</span> wines</h2>
+        {filteredWines.length > 0 && (
+        <h3 className='Heading16M'>
+            Showing wines {" "}
+            {filters.sellerName && <span>from seller "{filters.sellerName}", </span>}
+            {<span>with rating &gt; {filters.ratingRange[0]}, </span>}
+            {filters.ratingRange[1] < 5 && <span>with ratings less than {filters.ratingRange[1]}, </span>}
+            {<span>with prics from €{filters.priceRange[0]}, </span>}
+            {filters.priceRange[1] < 500 && <span>to €{filters.priceRange[1]}, </span>}
+            {filters.priceRange[1] == 500 && <span> to more than €{filters.priceRange[1]}+, </span>}
+            {filters.countries.length > 0 && <span>from {filters.countries.join(", ")}, </span>}
+            {filters.grape.length > 0 && <span>with grapes: {filters.grape.join(", ")}, </span>}
+        </h3>
+        )}
         <div className='d-flex mt_40 space-between'>
             <div className='w-40 leftSection'>
             <h2 className='Heading22B'>
