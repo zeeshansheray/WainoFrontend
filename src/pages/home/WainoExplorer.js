@@ -199,7 +199,7 @@ const ListingComponent = ({state}) => {
 
   const [filters, setFilters] = useState({
     sellerName : '',
-    priceRange : [0,500],
+    priceRange : [],
     ratingRange: [0,5],
     countries  : [],
     grape      : [],
@@ -232,84 +232,153 @@ const ListingComponent = ({state}) => {
 
   // Get unique winery names
   const uniqueCountryNames = getUniqueCountryNames(state.fetchedData);
-
+  
   const getUniqueGrapeNames = (data) => {
     const uniqueNames = [];
     data.forEach((wine) => {
-      if (!uniqueNames.includes(wine.grape)) {
-        uniqueNames.push(wine.grape);
+      if (!uniqueNames.includes(wine.grape.toLowerCase())) {
+        uniqueNames.push(wine.grape.toLowerCase());
       }
     });
-    return uniqueNames;
+  
+    let sorted = uniqueNames.sort((a, b) => a.localeCompare(b));
+  
+    return sorted;
   };
 
   // Get unique winery names
   const uniqueGrapeNames = getUniqueGrapeNames(state.fetchedData);
+  
+  
+  const handleChangePrice = (priceRange) => {
+    const index = filters.priceRange.findIndex(
+      ([minPrice, maxPrice]) =>
+        minPrice === priceRange[0] && maxPrice === priceRange[1]
+    );
 
-  const handleChangePrice = (event, newValue) => {
-    setFilters({...filters , priceRange : newValue})
+    const updatedPriceRange = [...filters.priceRange];
+    if (index !== -1) {
+      updatedPriceRange.splice(index, 1);
+    } else {
+      updatedPriceRange.push(priceRange);
+    }
+
+    updatedPriceRange.sort((a, b) => a[0] - b[0]);
+    setFilters({ ...filters, priceRange: updatedPriceRange });
+  };
+  
+  
+  console.log('filtereed ', filters.priceRange)
+
+
+  const handleChangeRatings = (ratings) => {
+    setFilters({ ...filters, ratings });
   };
 
-  const handleChangeRatings = (event, newValue) => {
-    setFilters({...filters, ratingRange : newValue})
-  };
-
-  function valuetext(value) {
-    return `${value} €`;
-  }
+  const priceRangeOptions = [
+    { label: '1-5', value: [1, 5] },
+    { label: '5-10', value: [5, 10] },
+    { label: '10-15', value: [10, 15] },
+    { label: '15-25', value: [15, 25] },
+    { label: '25-50', value: [25, 50] },
+    { label: '50-500', value: [50, 500] },
+  ];
 
   useEffect(() => {
-    // Apply filters to the fetched data
-    const filteredData = state.fetchedData.filter((wine) => {
-      // Apply sellerName filter
-      if (filters.sellerName && wine.wine_seller !== filters.sellerName) {
-        return false;
-      }
-  
-      // Apply priceRange filter
-      const winePrice = parseFloat(wine.current_price);
-      if (filters.priceRange[0] > winePrice || winePrice > filters.priceRange[1]) {
-        return false;
-      }
-  
-      // Apply ratingRange filter
-      const wineRating = parseFloat(wine.Rating_Vivino);
-      if (filters.ratingRange[0] > wineRating || wineRating > filters.ratingRange[1]) {
-        return false;
-      }
-  
-      // Apply countries filter
-      if (filters.countries.length > 0 && !filters.countries.includes(wine.country)) {
-        return false;
-      }
-  
-      // Apply grape filter
-      if (filters.grape.length > 0 && !filters.grape.some(selectedGrape => selectedGrape === wine.grape)) {
-        return false;
-      }
-  
-      // All filters passed
-      return true;
-    });
-  
+   // Apply filters to the fetched data
+  const filteredData = state.fetchedData.filter((wine) => {
+    // Apply sellerName filter
+    if (filters.sellerName && wine.wine_seller !== filters.sellerName) {
+      return false;
+    }
+
+    // Apply ratingRange filter
+    const wineRating = parseFloat(wine.Rating_Vivino);
+    if (filters?.ratings?.length > 0 && (filters?.ratings[0] > wineRating || wineRating > filters.ratings[1])) {
+      return false;
+    }
+
+    // Apply countries filter
+    if (filters.countries.length > 0 && !filters.countries.includes(wine.country)) {
+      return false;
+    }
+
+    // Apply grape filter
+    if (filters.grape?.length > 0 && !filters.grape.includes(wine.grape)) {
+      return false;
+    }
+
+    // Apply priceRange filter
+   // Apply priceRange filter
+   if (filters.priceRange.length > 0) {
+    const winePrice = parseFloat(wine.current_price);
+    if (
+      !filters.priceRange.some(
+        ([minPrice, maxPrice]) => minPrice <= winePrice && winePrice <= maxPrice
+      )
+    ) {
+      return false;
+    }
+  }
+
+  const priceRangeCounts = countWinesInPriceRanges(filteredWines, priceRangeOptions);
+  console.log('ranges ', priceRangeCounts);
+
+    // All filters passed
+    return true;
+  });
+
+  console.log('filteredData ', filteredData)
+
     setFilteredWines(filteredData);
 
   },[filters.countries, filters.sellerName, filters.grape, filters.priceRange[0], filters.priceRange[1], filters.sellerName, filters.ratingRange[0], filters.ratingRange[1]])
 
+  const countWinesInPriceRanges = (wines, priceRangeOptions) => {
+    const countMap = {};
+  
+    // Initialize the countMap with 0 for each price range
+    priceRangeOptions.forEach((option) => {
+      countMap[option.label] = 0;
+    });
+  
+    // Count the wines in each price range
+    wines.forEach((wine) => {
+      const winePrice = parseFloat(wine.current_price);
+      priceRangeOptions.forEach((option) => {
+        if (winePrice >= option.value[0] && winePrice <= option.value[1]) {
+          countMap[option.label]++;
+        }
+      });
+    });
+  
+    return countMap;
+  };
+
+  const handleChangeGrape = (grape) => {
+    const updatedGrape = [...filters.grape];
+    const index = updatedGrape.indexOf(grape);
+    if (index !== -1) {
+      updatedGrape.splice(index, 1);
+    } else {
+      updatedGrape.push(grape);
+    }
+
+    setFilters({ ...filters, grape: updatedGrape });
+  };
+
   return(
     <div id="ListingComponent">
-        <h2 className='Heading26M pt_40'>Showing Results for <span className='Heading28B'>{filteredWines.length >0 ? filteredWines.length : state.fetchedData.length}</span> wines</h2>
+        <h2 className='Heading26M pt_40'>Showing Results for <span className='Heading28B'>{filteredWines.length}</span> wines</h2>
         {filteredWines.length > 0 && (
-        <h3 className='Heading16M'>
-            Showing wines {" "}
-            {filters.sellerName && <span>from seller "{filters.sellerName}", </span>}
-            {<span>with rating &gt; {filters.ratingRange[0]}, </span>}
-            {filters.ratingRange[1] < 5 && <span>with ratings less than {filters.ratingRange[1]}, </span>}
-            {<span>with prics from €{filters.priceRange[0]}, </span>}
-            {filters.priceRange[1] < 500 && <span>to €{filters.priceRange[1]}, </span>}
-            {filters.priceRange[1] == 500 && <span> to more than €{filters.priceRange[1]}+, </span>}
-            {filters.countries.length > 0 && <span>from {filters.countries.join(", ")}, </span>}
-            {filters.grape.length > 0 && <span>with grapes: {filters.grape.join(", ")}, </span>}
+        <h3 className="Heading16M">
+          Showing wines{' '}
+            Showing Results for {filteredWines.length} wines,
+            ranging from {filters.priceRange.length > 0 ? filters.priceRange[0][0] : 'any '}
+            to {filters.priceRange.length > 0 ? filters.priceRange[filters.priceRange.length - 1][1] : 'any'} EUR,
+            ratings from {filters.ratingRange[0]} to {filters.ratingRange[1]},
+            in countries {filters.countries.length > 0 ? filters.countries.join(', ') : 'any'},
+            and grape {filters.grape.length > 0 ? filters.grape.join(', ') : 'any'}.
         </h3>
         )}
         <div className='d-flex mt_40 space-between'>
@@ -332,21 +401,24 @@ const ListingComponent = ({state}) => {
               Price Range
               <div className='Heading16M'>EUR</div>
             </h2>
-            <div className='mt_16'>
-                <div className='d-flex space-between mb_8'>
-                  <p className='Caption12M'>€{filters.priceRange[0]}</p>
-                  <p className='Caption12M'>{filters.priceRange[1] == 500 ? '€500 +' : filters.priceRange[1]}</p>
-                </div>
-                <Slider
-                  value             = {filters.priceRange}
-                  onChange          = {handleChangePrice}
-                  valueLabelDisplay = "auto"
-                  aria-labelledby   = "range-slider"
-                  getAriaValueText  = {valuetext}
-                  max               = {500}
-                />
+            <div className="price-buttons">
+                {priceRangeOptions.map((option) => (
+                  <button
+                    key={option.label}
+                    className={
+                      filters.priceRange.some(
+                        ([minPrice, maxPrice]) =>
+                          minPrice === option.value[0] && maxPrice === option.value[1]
+                      )
+                        ? "price selected"
+                        : "price"
+                    }
+                    onClick={() => handleChangePrice(option.value)}
+                  >
+                    {option.label}
+                  </button>
+                ))}
               </div>
-              
               <h2 className='Heading22B mt_60 d-flex space-between align-items-center'>
                 Ratings
               <div className='Heading16M'>Out of 5</div>
@@ -386,23 +458,24 @@ const ListingComponent = ({state}) => {
               <h2 className='Heading22B mt_60'>
                 Grape
               </h2>
-              <Autocomplete
-                  multiple
-                  id             = "tags-standard"
-                  options        = {uniqueGrapeNames}
-                  getOptionLabel={(option) => option}
-                  onChange={(e, value)=>setFilters({...filters, grape : value})}
-                  renderInput    = {(params) => (
-                    <TextField
-                      {...params}
-                      variant="standard"
-                      label="Select"
-                    />
-                  )}
-                />
+              <div className='price-buttons'>
+                {uniqueGrapeNames.map((grape) => (
+                  <button
+                    key={grape}
+                    className={
+                      filters.grape.includes(grape)
+                        ? 'price selected'
+                        : 'price'
+                    }
+                    onClick={() => handleChangeGrape(grape)}
+                  >
+                    {grape}
+            </button>
+          ))}
+        </div>
             </div>
             <div className='w-55'>
-              {(filteredWines.length > 0 ? filteredWines : state.fetchedData).map((wine)=><div className="card mb-3 position-relative">
+              {(filteredWines).map((wine)=><div className="card mb-3 position-relative">
                 <div className="row no-gutters">
                   <div className="col-md-3">
                     <img src={wine.image_url} style={{objectFit : 'contain'}} width={'100%'} height={190} className="card-img" alt="..." />

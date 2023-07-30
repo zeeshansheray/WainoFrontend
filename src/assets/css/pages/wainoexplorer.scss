@@ -65,6 +65,23 @@
         .leftSection{
           padding: 0px 32px 0px 0px;
         }
+
+        .price{
+          border-radius: 24px;
+          outline      : 1px solid #aaa;
+          border       : 0px;
+          padding      : 8px 32px;
+          margin-top   : 8px;
+          margin-right : 8px;
+          color        : black;
+          transition: ease 0.4s;
+          background-color: white;
+        }
+        
+        .selected{
+          background-color: red !important;
+          color: white !important; 
+        }
       }
   }
   
