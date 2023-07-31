@@ -487,6 +487,9 @@ const ListingComponent = ({state}) => {
                       <div className='d-flex space-between'>
                         <div>
                             {wine.country && <p className="card-text"><small className="text-muted d-flex align-items-center"><span className='mr_4'><SvgIcons.LocationIcon /></span> {wine.country}</small></p>}
+                            <div className='Heading16M mt_32 ml_4'>
+                              {wine?.wine_seller}
+                            </div>
                         </div>
                         <div className='middle'>
                           <p className='Heading24M'>
