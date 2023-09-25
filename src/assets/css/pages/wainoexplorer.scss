@@ -110,7 +110,7 @@
   }
   
 
-  @media (max-width: 600px){
+  @media screen and (max-width: 600px) {
     #WainoExplorer{
     height: calc(100vh);
       .background-blur {
