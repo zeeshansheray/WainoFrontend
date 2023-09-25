@@ -45,9 +45,9 @@ const Navbar = () => {
         {menuItems.map((item, index) => {
           return (
             <li key={index}>
-              <Link to={item.url} className={item.cName} style={{color : layout?.state?.isHome ? '#ffffff' : '#000000'}}>
+              <a href={item.url} className={item.cName} style={{color : layout?.state?.isHome ? '#ffffff' : '#000000'}}>
                 {item.title}
-              </Link>
+              </a>
             </li>
           );
         })}
