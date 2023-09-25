@@ -14,6 +14,7 @@ import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 
 import Slider from '@material-ui/core/Slider';
+import { ColorScheme } from '../../enums'
 
 export default function WainoExplorer() {
   const layout = useContext(LayoutContext)
@@ -21,7 +22,8 @@ export default function WainoExplorer() {
     loader    : false,
     mainLoader: true,
     isLoggedIn: false,
-    fetchedData : []
+    fetchedData : [],
+    smallScreenFilter: false,
   })
   const initValues = {
     firstName: '',
@@ -121,7 +123,7 @@ export default function WainoExplorer() {
 
         ?
 
-        <ListingComponent state={state} setState={setState}/>
+        <ListingComponent state={state}  setState={setState}/>
 
         :
         <>
@@ -195,7 +197,7 @@ export default function WainoExplorer() {
 }
 
 
-const ListingComponent = ({state}) => {
+const ListingComponent = ({state, setState}) => {
 
   const [filters, setFilters] = useState({
     sellerName : '',
@@ -381,11 +383,20 @@ const ListingComponent = ({state}) => {
             and grape {filters.grape.length > 0 ? filters.grape.join(', ') : 'any'}.
         </h3>
         )}
+        <div className='filterTitle Heading18M' onClick={()=>setState({...state, smallScreenFilter : !state.smallScreenFilter})}>
+          Filters
+        </div>
         <div className='d-flex mt_40 space-between'>
-            <div className='w-40 leftSection'>
-            <h2 className='Heading22B'>
-              Seller Name
-            </h2>
+            <div className={`leftSection ${state.smallScreenFilter && 'filterAppliedBox'}`}>
+            <div className='d-flex space-between'>
+              <h2 className='Heading22B'>
+                Seller Name
+              </h2>
+              {state.smallScreenFilter &&
+              <div onClick={()=>setState({...state, smallScreenFilter : false})}>
+                <SvgIcons.CloseIcon color={ColorScheme.ColorSchemeCode.black}/>
+              </div>}
+            </div>
             <Autocomplete
             options        = {uniqueWineryNames}
             getOptionLabel = {(option) => option}
@@ -474,7 +485,7 @@ const ListingComponent = ({state}) => {
           ))}
         </div>
             </div>
-            <div className='w-55'>
+            <div className='rightSection'>
               {(filteredWines).map((wine)=><div className="card mb-3 position-relative">
                 <div className="row no-gutters">
                   <div className="col-md-3">

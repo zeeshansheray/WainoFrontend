@@ -1,68 +1,59 @@
-import React, { useContext, useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
-import { CartContext } from '../context/cart.context'
+import React, { useContext, useState } from "react";
+import { Link } from "react-router-dom";
+import { LayoutContext } from "../context/layout.context";
 
-import { LayoutContext } from '../context/layout.context'
-import { UserContext } from '../context/user.context'
+const Navbar = () => {
+  const [active, setActive] = useState(false);
+  const layout = useContext(LayoutContext);
 
-import {PngIcons} from '../icons'
+  const handleClick = () => {
+    setActive(!active);
+  };
 
-import {utils} from '../utils'
+  const menuItems = [
+    {
+      title: "Home",
+      url: "",
+      cName: "nav-links"
+    },
+    {
+      title: "Waino Explorer",
+      url: "waino-explorer",
+      cName: "nav-links"
+    },
+    {
+      title: "About",
+      url: "about",
+      cName: "nav-links"
+    },
+    {
+        title: "Profile",
+        url: "profile",
+        cName: "nav-links"
+      }
+  ];
 
+  return (
+    <nav className="navbar" style={{background : layout?.state?.isHome ? '#000000' : '#F6F8FA'}}>
+      <h1 className="navbar-logo" style={{color : layout?.state?.isHome ? '#ffffff' : '#000000 '}}>
+        Waino
+      </h1>
+      <div className="menu-icon" onClick={handleClick}>
+        <i className={active ? "fas fa-times" : "fas fa-bars"}></i>
+      </div>
+      <ul className={active ? "nav-menu active" : "nav-menu"} style={{color : layout?.state?.isHome ? '#ffffff' : '#000000', background : layout?.state?.isHome ? '#000000' : '#F5F7F8'}}>
+        {menuItems.map((item, index) => {
+          return (
+            <li key={index}>
+              <Link to={item.url} className={item.cName} style={{color : layout?.state?.isHome ? '#ffffff' : '#000000'}}>
+                {item.title}
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
+    </nav>
+  );
+};
 
-export default function Navbar() {
-
-    const [selected, setSelected] = useState('home')
-    const layout = useContext(LayoutContext)
-
-    useEffect(() => {
-        if(window.location.pathname?.includes('products')){
-            setSelected('products')
-        }
-        else if(window.location.pathname?.includes('blog')){
-            setSelected('blog')
-        }
-        else if(window.location.pathname?.includes('contact')){
-            setSelected('contact')
-        }
-        else if(window.location.pathname?.includes('user')){
-            setSelected('user')
-        }
-        else if(window.location.pathname?.includes('cart')){
-            setSelected('cart')
-        }
-        else{
-            setSelected('home')
-        }
-
-
-    },[window.location.pathname])
-
-
-    return (
-        <div id="Navbar" className={`${!layout.state.showNav && 'd-none'}`}>
-            <section id="header">
-                {/* <Link to="/"><a ><img src={PngIcons.logo} height="35px" className="logo" alt="" /></a></Link> */}
-                <Link to="/"></Link>
-                <div>
-                    <ul id="navbar" className="cp">
-                        <li><Link to="/" className={`${selected == "home" && 'active'}`} href="index.html">Home</Link></li>
-
-                        <li><Link to="/waino-explorer">Waino Explorer</Link></li>
-
-                        <li><Link to="/about">About</Link></li>
-
-                        <li><Link to="/profile">Profile</Link></li>
-
-                        {/* <li><Link  to="/contact" className={`${selected == "contact" && 'active'}`}>Contact</Link></li> */}
-                        <Link to="" id="close"><i className="far fa-times"></i></Link>
-                    </ul>
-                </div>
-                <div id="mobile">
-                    <Link to="cart"  className={`${selected == "cart" && 'active'}`}><i className="far fa-shopping-bag"></i></Link>
-                    <i id="bar" className="fas fa-outdent"></i>
-                </div>
-            </section>
-        </div>
-      )
-    }
+export default Navbar;
