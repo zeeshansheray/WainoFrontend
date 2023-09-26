@@ -236,16 +236,20 @@ const ListingComponent = ({state, setState}) => {
   const uniqueCountryNames = getUniqueCountryNames(state.fetchedData);
   
   const getUniqueGrapeNames = (data) => {
-    const uniqueNames = [];
+    const uniqueNames = new Set();
+  
     data.forEach((wine) => {
-      if (!uniqueNames.includes(wine.grape.toLowerCase())) {
-        uniqueNames.push(wine.grape.toLowerCase());
-      }
+      const grapes = wine.grape.toLowerCase().split(',').map((grape) => grape.trim());
+      grapes.forEach((grape) => {
+        if (grape) {
+          uniqueNames.add(grape);
+        }
+      });
     });
   
-    let sorted = uniqueNames.sort((a, b) => a.localeCompare(b));
+    const sortedUniqueNames = [...uniqueNames].sort((a, b) => a.localeCompare(b));
   
-    return sorted;
+    return sortedUniqueNames;
   };
 
   // Get unique winery names
