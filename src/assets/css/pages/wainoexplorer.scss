@@ -46,8 +46,8 @@
         padding: 0px 80px;
 
         .card{
-          min-height: 190px;
-          max-height: 190px;
+          min-height: 210px;
+          max-height: 210px;
           border: 0px;
           overflow: hidden;
           box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
@@ -100,6 +100,7 @@
           color        : black;
           transition: ease 0.4s;
           background-color: white;
+          text-transform: capitalize;
         }
         
         .selected{

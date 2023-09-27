@@ -15,6 +15,7 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 
 import Slider from '@material-ui/core/Slider';
 import { ColorScheme } from '../../enums'
+import { Link } from 'react-router-dom'
 
 export default function WainoExplorer() {
   const layout = useContext(LayoutContext)
@@ -493,17 +494,26 @@ const ListingComponent = ({state, setState}) => {
               {(filteredWines).map((wine)=><div className="card mb-3 position-relative">
                 <div className="row no-gutters">
                   <div className="col-md-3">
-                    <img src={wine.image_url} style={{objectFit : 'contain'}} width={'100%'} height={190} className="card-img" alt="..." />
+                    <img src={wine.image_url} style={{objectFit : 'contain'}} width={'100%'} height={210} className="card-img" alt="..." />
                   </div>
                   <div className="col-md-9">
                     <div className="card-body">
                       <h5 className="Heading16M mb_0">{wine?.winery_name || 'N/A'}</h5>
                       <p className="Heading18B ellipses mb_8">{wine.wine_name}</p>
                       <div className='d-flex space-between'>
+                        {console.log('wine ', wine)}
                         <div>
                             {wine.country && <p className="card-text"><small className="text-muted d-flex align-items-center"><span className='mr_4'><SvgIcons.LocationIcon /></span> {wine.country}</small></p>}
                             <div className='Heading16M mt_32 ml_4'>
                               {wine?.wine_seller}
+                            </div>
+                            <div className='d-flex'>
+                            {wine?.Vivino_url && <Link  target="_blank" to={wine?.Vivino_url} className='Heading14M mt_8 ml_4'>
+                              Vivino Link
+                            </Link>}
+                            {wine?.product_url && <Link  target="_blank" to={wine?.product_url} className='Heading14M mt_8 ml_16'>
+                              Seller Link
+                            </Link>}
                             </div>
                         </div>
                         <div className='middle'>
@@ -522,6 +532,7 @@ const ListingComponent = ({state, setState}) => {
                 {wine.current_price && !Number.isNaN(Number(wine.current_price)) && <div class="priceSection Heading18B">
                   € {wine.current_price}
               </div>}
+              
               </div>)}
             </div>
         </div>
