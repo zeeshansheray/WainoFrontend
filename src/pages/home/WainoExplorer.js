@@ -44,7 +44,6 @@ export default function WainoExplorer() {
     setState({...state, loader : true})
     let payload = {...formik.values}
 
-    console.log('payload ', payload)
     const {response,error} = await AuthService.Login({payload});
 
     if(response.data){
@@ -54,8 +53,6 @@ export default function WainoExplorer() {
     else{
       setState({...state, loader : false})
     }
-    console.log('response ', response );
-    console.log('error ', error );
 
   }
 
@@ -83,8 +80,8 @@ export default function WainoExplorer() {
   function sortByRating(data) {
     const compareRatings = (a, b) => {
       // Convert the ratings to numbers for comparison
-      const ratingA = !isNaN(a.Rating_Vivino) ? Number(a.Rating_Vivino) : -Infinity;
-      const ratingB = !isNaN(b.Rating_Vivino) ? Number(b.Rating_Vivino) : -Infinity;
+      const ratingA = !isNaN(a.ratings) ? Number(a.ratings) : -Infinity;
+      const ratingB = !isNaN(b.ratings) ? Number(b.ratings) : -Infinity;
   
       // Higher numeric ratings should come first
       if (ratingA > ratingB) {
@@ -201,7 +198,7 @@ export default function WainoExplorer() {
 const ListingComponent = ({state, setState}) => {
 
   const [filters, setFilters] = useState({
-    sellerName : '',
+    sellerName : [],
     priceRange : [],
     ratingRange: [0,5],
     countries  : [],
@@ -275,11 +272,10 @@ const ListingComponent = ({state, setState}) => {
   };
   
   
-  console.log('filtereed ', filters.priceRange)
 
 
-  const handleChangeRatings = (ratings) => {
-    setFilters({ ...filters, ratings });
+  const handleChangeRatings = (ratings, value) => {
+    setFilters({ ...filters, ratingRange : value });
   };
 
   const priceRangeOptions = [
@@ -295,13 +291,14 @@ const ListingComponent = ({state, setState}) => {
    // Apply filters to the fetched data
   const filteredData = state.fetchedData.filter((wine) => {
     // Apply sellerName filter
-    if (filters.sellerName && wine.wine_seller !== filters.sellerName) {
+    if (filters.sellerName.length > 0 && !filters.sellerName.includes(wine.wine_seller)) {
       return false;
     }
 
     // Apply ratingRange filter
-    const wineRating = parseFloat(wine.Rating_Vivino);
-    if (filters?.ratings?.length > 0 && (filters?.ratings[0] > wineRating || wineRating > filters.ratings[1])) {
+    const wineRating = parseFloat(wine?.ratings || "0");
+    console.log('wineRating ', wine)
+    if (filters?.ratingRange?.length > 0 && (filters?.ratingRange[0] > wineRating || wineRating > filters.ratingRange[1])) {
       return false;
     }
 
@@ -329,13 +326,10 @@ const ListingComponent = ({state, setState}) => {
   }
 
   const priceRangeCounts = countWinesInPriceRanges(filteredWines, priceRangeOptions);
-  console.log('ranges ', priceRangeCounts);
 
     // All filters passed
     return true;
   });
-
-  console.log('filteredData ', filteredData)
 
     setFilteredWines(filteredData);
 
@@ -374,6 +368,12 @@ const ListingComponent = ({state, setState}) => {
     setFilters({ ...filters, grape: updatedGrape });
   };
 
+
+  const handleChangeSeller = (event, values) => {
+    setFilters({ ...filters, sellerName: values });
+  };
+
+
   return(
     <div id="ListingComponent">
         <h2 className='Heading26M pt_40'>Showing Results for <span className='Heading28B'>{filteredWines.length}</span> wines</h2>
@@ -381,7 +381,8 @@ const ListingComponent = ({state, setState}) => {
         <h3 className="Heading16M">
           Showing wines{' '}
             Showing Results for {filteredWines.length} wines,
-            ranging from {filters.priceRange.length > 0 ? filters.priceRange[0][0] : 'any '}
+            selled by {filters.sellerName.length > 0 ? filters.sellerName.join(', ') : 'any' },
+            ranging from {filters.priceRange.length > 0 ? filters.priceRange[0][0] : 'any'},
             to {filters.priceRange.length > 0 ? filters.priceRange[filters.priceRange.length - 1][1] : 'any'} EUR,
             ratings from {filters.ratingRange[0]} to {filters.ratingRange[1]},
             in countries {filters.countries.length > 0 ? filters.countries.join(', ') : 'any'},
@@ -403,15 +404,17 @@ const ListingComponent = ({state, setState}) => {
               </div>}
             </div>
             <Autocomplete
-            options        = {uniqueWineryNames}
-            getOptionLabel = {(option) => option}
-            id             = "auto-complete"
-            autoComplete
-            onChange={(e, value)=>setFilters({...filters, sellerName : value})}
-            includeInputInList
-            renderInput={(params) => (
-              <TextField {...params} label="Select" variant="standard" />
-            )}
+              multiple  // Allow multiple selections
+              options={uniqueWineryNames}
+              getOptionLabel={(option) => option}
+              id="auto-complete"
+              autoComplete
+              onChange={handleChangeSeller} // Update the event handler
+              value={filters.sellerName} // Pass the selected values
+              includeInputInList
+              renderInput={(params) => (
+                <TextField {...params} label="Select" variant="standard" />
+              )}
           />
             <h2 className='Heading22B mt_60 d-flex space-between align-items-center'>
               Price Range
@@ -501,7 +504,6 @@ const ListingComponent = ({state, setState}) => {
                       <h5 className="Heading16M mb_0">{wine?.winery_name || 'N/A'}</h5>
                       <p className="Heading18B ellipses mb_8">{wine.wine_name}</p>
                       <div className='d-flex space-between'>
-                        {console.log('wine ', wine)}
                         <div>
                             {wine.country && <p className="card-text"><small className="text-muted d-flex align-items-center"><span className='mr_4'><SvgIcons.LocationIcon /></span> {wine.country}</small></p>}
                             <div className='Heading16M mt_32 ml_4'>
@@ -518,10 +520,10 @@ const ListingComponent = ({state, setState}) => {
                         </div>
                         <div className='middle'>
                           <p className='Heading24M'>
-                              {!Number.isNaN(Number(wine.Rating_Vivino)) ?  wine.Rating_Vivino : ''}
+                              {!Number.isNaN(Number(wine.ratings)) ?  wine.ratings : ''}
                           </p>
                           <div style={{marginTop : '-10px'}}>
-                            {!Number.isNaN(Number(wine.Rating_Vivino)) &&   <StarRating rating={parseFloat(wine.Rating_Vivino)} />}
+                            {!Number.isNaN(Number(wine.ratings)) &&   <StarRating rating={parseFloat(wine.ratings)} />}
                           </div>
                           <p  className='Caption12M'>{wine.Number_of_ratings_Vivino}</p>
                         </div>
