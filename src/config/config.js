@@ -1,7 +1,7 @@
 import { Environment } from '../enums/enums'
 
 const env = {
-    API_URL : 'http://localhost:8080',
+    API_URL : 'https://waino.io/api',
     GOOGLE_CLIENT_ID : '',
     IMAGE_BASE_URL : ''
 }
