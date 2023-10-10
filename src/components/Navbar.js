@@ -35,8 +35,9 @@ const Navbar = () => {
 
   return (
     <nav className="navbar" style={{background : layout?.state?.isHome ? '#000000' : '#F6F8FA'}}>
-      <h1 className="navbar-logo" style={{color : layout?.state?.isHome ? '#ffffff' : '#000000 '}}>
-        Waino
+      <h1 className="navbar-logo d-flex align-items-end" style={{color : layout?.state?.isHome ? '#ffffff' : '#000000 '}}>
+        Waino <div className="fs-18 ml_12 pb_4 biggerScreens">The best supermarket wines under your finertips</div>
+        <div className="fs-12 ml_12 pb_4 smallerScreens">The best supermarket wines  <br/> under your  finertips</div>
       </h1>
       <div className="menu-icon" onClick={handleClick}>
         <i className={active ? "fas fa-times" : "fas fa-bars"}></i>

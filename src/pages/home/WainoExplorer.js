@@ -284,7 +284,8 @@ const ListingComponent = ({state, setState}) => {
     { label: '10-15', value: [10, 15] },
     { label: '15-25', value: [15, 25] },
     { label: '25-50', value: [25, 50] },
-    { label: '50-500', value: [50, 500] },
+    { label: '50-100', value: [59, 100] },
+    { label: '100-500', value: [100, 500] },
   ];
 
   useEffect(() => {
@@ -519,13 +520,20 @@ const ListingComponent = ({state, setState}) => {
                             </div>
                         </div>
                         <div className='middle'>
-                          <p className='Heading24M'>
+                          <div className='d-flex align-items-center'>
+                            <div className='Heading14B pr_8'>
+                              Vivino <br/> Ratings:
+                            </div>
+                            <div className="middle">
+                            <p className='Heading24M'>
                               {!Number.isNaN(Number(wine.ratings)) ?  wine.ratings : ''}
                           </p>
                           <div style={{marginTop : '-10px'}}>
                             {!Number.isNaN(Number(wine.ratings)) &&   <StarRating rating={parseFloat(wine.ratings)} />}
                           </div>
                           <p  className='Caption12M'>{wine.Number_of_ratings_Vivino}</p>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
