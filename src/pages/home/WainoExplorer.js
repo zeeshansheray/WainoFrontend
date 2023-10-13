@@ -522,7 +522,7 @@ const ListingComponent = ({state, setState}) => {
                         <div className='middle'>
                           <div className='d-flex align-items-center'>
                             <div className='Heading14B pr_8'>
-                              Vivino <br/> Ratings:
+                              Vivino <br/> Rating:
                             </div>
                             <div className="middle">
                             <p className='Heading24M'>
