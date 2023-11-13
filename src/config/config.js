@@ -1,7 +1,7 @@
 import { Environment } from '../enums/enums'
 
 const env = {
-    API_URL : 'https://waino.io/api',
+    API_URL : 'https://explorer.waino.io/api',
     GOOGLE_CLIENT_ID : '',
     IMAGE_BASE_URL : ''
 }
@@ -11,7 +11,7 @@ if(process.env.REACT_APP_ENV === Environment.DEVELOPMENT){
 }
 
 if(process.env.REACT_APP_ENV === Environment.PRODUCTION){
-    env.API_URL            = 'https://waino.io/api'
+    env.API_URL            = 'https://explorer.waino.io/api'
 }
 
 
