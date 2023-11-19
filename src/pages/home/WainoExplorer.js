@@ -365,6 +365,19 @@ const ListingComponent = ({state, setState}) => {
     setFilters({ ...filters, sellerName: values });
   };
 
+return(
+  <div id="ListingComponent">
+    <input
+      type="text"
+      placeholder="Search by wine or winery name"
+      value={searchTerm}
+      onChange={(e) => setSearchTerm(e.target.value)}
+      className="search-input"
+    />
+    <h2 className='Heading26M pt_40'>Showing Results for <span className='Heading28B'>{filteredWines.length}</span> wines</h2>
+    {/* ... rest of your component ... */}
+  </div>
+)
 
   return(
     <div id="ListingComponent">
