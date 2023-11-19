@@ -375,7 +375,7 @@ const ListingComponent = ({state, setState}) => {
             to {filters.priceRange.length > 0 ? filters.priceRange[filters.priceRange.length - 1][1] : 'any'} EUR,
             ratings from {filters.ratingRange[0]} to {filters.ratingRange[1]},
             in countries {filters.countries.length > 0 ? filters.countries.join(', ') : 'any'},
-            and grape {filters.grape.length > 0 ? filters.grape.join(', ') : 'any'}.
+           
         </h3>
         )}
         <div className='filterTitle Heading18M' onClick={()=>setState({...state, smallScreenFilter : !state.smallScreenFilter})}>
