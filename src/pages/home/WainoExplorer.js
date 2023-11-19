@@ -232,18 +232,7 @@ const ListingComponent = ({state, setState}) => {
   // Get unique winery names
   const uniqueCountryNames = getUniqueCountryNames(state.fetchedData);
   
-  const getUniqueGrapeNames = (data) => {
-    const uniqueNames = new Set();
-  
-    data.forEach((wine) => {
-      const grapes = wine.grape.toLowerCase().split(',').map((grape) => grape.trim());
-      grapes.forEach((grape) => {
-        if (grape) {
-          uniqueNames.add(grape);
-        }
-      });
-    });
-  
+ 
     const sortedUniqueNames = [...uniqueNames].sort((a, b) => a.localeCompare(b));
   
     return sortedUniqueNames;
