@@ -122,10 +122,7 @@ export default function WainoExplorer() {
         ?
 
         <ListingComponent state={state}  setState={setState}/>
-const ListingComponent = ({state, setState}) => {
-  const [searchTerm, setSearchTerm] = useState('');
-  // ... rest of your existing state and variables ...
-
+          
         :
         <>
           <div className='background-blur'></div>
@@ -199,6 +196,9 @@ const ListingComponent = ({state, setState}) => {
 
 
 const ListingComponent = ({state, setState}) => {
+
+  const [searchTerm, setSearchTerm] = useState('');
+  // ... rest of your existing state and variables ...
 
   const [filters, setFilters] = useState({
     sellerName : [],
