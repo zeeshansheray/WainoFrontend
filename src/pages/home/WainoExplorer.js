@@ -474,24 +474,7 @@ const ListingComponent = ({state, setState}) => {
                   )}
                 />
 
-              <h2 className='Heading22B mt_60'>
-                Grape
-              </h2>
-              <div className='price-buttons'>
-                {uniqueGrapeNames.map((grape) => (
-                  <button
-                    key={grape}
-                    className={
-                      filters.grape.includes(grape)
-                        ? 'price selected'
-                        : 'price'
-                    }
-                    onClick={() => handleChangeGrape(grape)}
-                  >
-                    {grape}
-            </button>
-          ))}
-        </div>
+          
             </div>
             <div className='rightSection'>
               {(filteredWines).map((wine)=><div className="card mb-3 position-relative">
