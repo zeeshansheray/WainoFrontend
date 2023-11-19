@@ -499,10 +499,10 @@ return(
                             </div>
                             <div className='d-flex'>
                             {wine?.Vivino_url && <Link  target="_blank" to={wine?.Vivino_url} className='Heading14M mt_8 ml_4'>
-                              Vivino Link
+                              Learn more on Vivino
                             </Link>}
                             {wine?.product_url && <Link  target="_blank" to={wine?.product_url} className='Heading14M mt_8 ml_16'>
-                              Seller Link
+                              Buy right here!
                             </Link>}
                             </div>
                         </div>
