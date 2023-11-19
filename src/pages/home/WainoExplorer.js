@@ -202,7 +202,6 @@ const ListingComponent = ({state, setState}) => {
     priceRange : [],
     ratingRange: [0,5],
     countries  : [],
-    grape      : [],
   })
 
   const [filteredWines, setFilteredWines] = useState(state.fetchedData)
